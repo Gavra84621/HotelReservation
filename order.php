@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borneo Hotel Pontianak · Order</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .reservation-form {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 400px;
+      }
+
+      .reservation-form h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .reservation-form input,
+      .reservation-form select,
+      .reservation-form button {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      .reservation-form button {
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+
+      .reservation-form button:hover {
+        background-color: #0056b3;
+      }
+
+      .success,
+      .error {
+        text-align: center;
+        margin: 10px 0;
+        font-size: 14px;
+      }
+
+      .success {
+        color: green;
+      }
+
+      .error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reservation-form">
+      <h2>Hotel Reservation</h2>
+      <form id="reservationForm">
+        <input type="text" name="guest_name" placeholder="Full Name" required />
+        <input type="email" name="email" placeholder="Email Address" required />
+        <input type="tel" name="phone" placeholder="Phone Number" required />
+        <input type="date" name="check_in_date" placeholder="Check-In Date" required />
+        <input type="date" name="check_out_date" placeholder="Check-Out Date" required />
+        <select name="room_type" required>
+          <option value="" disabled selected>Select Room Type</option>
+          <option value="Superior">Superior</option>
+          <option value="Deluxe Twin">Deluxe Twin</option>
+          <option value="Deluxe Double">Deluxe Double</option>
+          <option value="Executive Twin">Executive Twin</option>
+          <option value="Executive Double">Executive Double</option>
+          <option value="Business Suite">Business Suite</option>
+        </select>
+        <button type="submit">Reserve</button>
+        <div class="d-grid gap-2 col-6 mx-auto">
+          <a class="btn btn-primary" href="index.php">Return</a>
+        </div>
+      </form>
+      <div class="success" id="successMessage" style="display:none;">Reservation successful! Please return to the home page and wait for confirmation message for payment information.</div>
+      <div class="error" id="errorMessage" style="display:none;">Error: Could not make a reservation.</div>
+    </div>
+
+    <script>
+      const reservationForm = document.getElementById('reservationForm');
+      const successMessage = document.getElementById('successMessage');
+      const errorMessage = document.getElementById('errorMessage');
+
+      reservationForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        successMessage.style.display = 'none';
+        errorMessage.style.display = 'none';
+
+        const formData = new FormData(reservationForm);
+
+        try {
+          const response = await fetch('reservation.php', {
+            method: 'POST',
+            body: formData,
+          });
+          const result = await response.json();
+
+          if (result.success) {
+            successMessage.style.display = 'block';
+            reservationForm.reset();
+          } else {
+            errorMessage.textContent = result.message;
+            errorMessage.style.display = 'block';
+          }
+        } catch (error) {
+          errorMessage.textContent = 'Error: Could not connect to the server.';
+          errorMessage.style.display = 'block';
+        }
+      });
+    </script>
+  </body>
+</html>
